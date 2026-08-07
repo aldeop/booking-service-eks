@@ -1,0 +1,14 @@
+.git
+.venv
+venv
+__pycache__
+*.pyc
+.pytest_cache
+tests
+scripts
+.env
+.env.*
+!.env.example
+requirements-dev.txt
+README.md
+LICENSE
