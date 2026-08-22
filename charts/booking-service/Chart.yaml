@@ -1,0 +1,6 @@
+apiVersion: v2
+name: booking-service
+description: Customer appointment booking service (FastAPI) on EKS
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

@@ -1,15 +1,26 @@
+# SUPERSEDED 2026-08-22 -- kept in place for historical reference only, not
+# deleted, so it's still visible how this was originally built. The current
+# approach is charts/booking-service/templates/migration-job.yaml, a Helm
+# pre-install/pre-upgrade hook, which solves the "Jobs are immutable, so a
+# second run needs a manual `kubectl delete job` first" problem this
+# standalone version had (Helm's hook-delete-policy handles it instead).
+#
+# The credentials wiring changed too: this version pulled DATABASE_HOST/
+# PORT/USER/PASSWORD/NAME from a plain K8s Secret (`booking-service-db`,
+# created by hand with `kubectl create secret generic ...` against a
+# Terraform-generated `random_password` -- see terraform/main.tf's own
+# history note). The current chart version instead uses IRSA + an
+# RDS-managed Secrets Manager secret (`DATABASE_SECRET_ARN`, fetched by the
+# app itself in app/config.py) for the password, with only host/port/name
+# as plain env vars -- no K8s Secret involved at all anymore.
+#
+# Original description, still accurate for what THIS file does:
 # Runs `alembic upgrade head` using the same image as the app itself (just a
 # different command than the Dockerfile's default CMD). This is the
 # Python-native equivalent of the reference doc's Flyway/Liquibase
 # "migration Job gates the deploy" pattern: apply this Job and wait for it
 # to complete successfully BEFORE rolling out a new app Deployment, so the
 # app never starts against a schema it doesn't expect yet.
-#
-# Standalone manifest for now -- once the Helm chart exists (next stage),
-# this becomes a pre-install/pre-upgrade Helm hook instead, which handles
-# the "delete the old completed Job before creating a new one" problem
-# automatically. Jobs are immutable, so re-running this as-is requires
-# `kubectl delete job -n booking-service booking-service-migrate` first.
 apiVersion: batch/v1
 kind: Job
 metadata:

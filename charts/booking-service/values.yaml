@@ -1,0 +1,57 @@
+image:
+  repository: booking-service
+  tag: local
+  pullPolicy: IfNotPresent
+
+replicaCount: 2
+
+service:
+  port: 80
+  targetPort: 8000
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+# serviceAccount.name is deliberately NOT derived from the Helm release name
+# -- the Terraform IRSA trust policy (terraform/main.tf) hardcodes the trust
+# condition to "system:serviceaccount:booking-service:booking-service", so
+# this name must stay fixed regardless of what release name is used.
+serviceAccount:
+  name: booking-service
+  # From `terraform output irsa_role_arn` after `terraform apply`. Leave
+  # blank to deploy without IRSA (e.g. database.secretArn also left blank
+  # and DATABASE_USER/PASSWORD supplied some other way).
+  roleArn: ""
+
+database:
+  host: ""
+  port: 5432
+  name: booking
+  # From `terraform output db_secret_arn` -- ARN of the RDS-managed
+  # Secrets Manager secret holding {"username": ..., "password": ...}.
+  secretArn: ""
+  awsRegion: us-east-1
+
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 50
+
+probes:
+  liveness:
+    path: /healthz
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  readiness:
+    path: /readyz
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+migration:
+  enabled: true
