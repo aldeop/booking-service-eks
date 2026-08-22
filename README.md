@@ -30,6 +30,7 @@ containerization, packaging, CI/CD, GitOps, and observability.
 ```
 .
 ├── app/            # FastAPI application source
+├── terraform/       # RDS + supporting networking (subnet group, SG) for the sandbox DB
 ├── charts/          # Helm chart(s)
 ├── .github/         # GitHub Actions workflows
 └── argocd/          # ArgoCD Application manifests
