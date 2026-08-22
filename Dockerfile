@@ -33,6 +33,12 @@ WORKDIR /app
 # a hard line between "runs in the container" and "local dev tooling".
 COPY app ./app
 
+# The migration Job runs `alembic upgrade head` using this same image (just
+# a different command than the default CMD below), so the migration scripts
+# need to travel with the app rather than living in a separate image.
+COPY alembic ./alembic
+COPY alembic.ini .
+
 USER appuser
 
 EXPOSE 8000

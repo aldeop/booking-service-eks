@@ -30,7 +30,9 @@ containerization, packaging, CI/CD, GitOps, and observability.
 ```
 .
 ├── app/            # FastAPI application source
+├── alembic/         # DB schema migrations (alembic.ini lives at repo root)
 ├── terraform/       # RDS + supporting networking (subnet group, SG) for the sandbox DB
+├── k8s/             # Plain K8s manifests not yet folded into the Helm chart
 ├── charts/          # Helm chart(s)
 ├── .github/         # GitHub Actions workflows
 └── argocd/          # ArgoCD Application manifests

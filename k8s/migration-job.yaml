@@ -1,0 +1,36 @@
+# Runs `alembic upgrade head` using the same image as the app itself (just a
+# different command than the Dockerfile's default CMD). This is the
+# Python-native equivalent of the reference doc's Flyway/Liquibase
+# "migration Job gates the deploy" pattern: apply this Job and wait for it
+# to complete successfully BEFORE rolling out a new app Deployment, so the
+# app never starts against a schema it doesn't expect yet.
+#
+# Standalone manifest for now -- once the Helm chart exists (next stage),
+# this becomes a pre-install/pre-upgrade Helm hook instead, which handles
+# the "delete the old completed Job before creating a new one" problem
+# automatically. Jobs are immutable, so re-running this as-is requires
+# `kubectl delete job -n booking-service booking-service-migrate` first.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: booking-service-migrate
+  namespace: booking-service
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: booking-service:local
+          command: ["alembic", "upgrade", "head"]
+          envFrom:
+            - secretRef:
+                name: booking-service-db
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
