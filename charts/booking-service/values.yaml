@@ -55,3 +55,8 @@ probes:
 
 migration:
   enabled: true
+
+affinity:
+  podAntiAffinity:
+    # "hard" | "soft" | "none"
+    type: none
