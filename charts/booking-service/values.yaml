@@ -60,3 +60,7 @@ affinity:
   podAntiAffinity:
     # "hard" | "soft" | "none"
     type: none
+  nodeAffinity:
+    enabled: false
+    label: booking-service-primary
+    value: "true"

@@ -15,24 +15,39 @@ spec:
         {{- include "booking-service.selectorLabels" . | nindent 8 }}
     spec:
       serviceAccountName: {{ .Values.serviceAccount.name }}
-      {{- if eq .Values.affinity.podAntiAffinity.type "hard" }}
-      # required: a pod can ONLY schedule on a node with no other
-      # booking-service pod already on it. Guarantees real spread (no
-      # single node failure takes out more than one replica) but means
-      # replicaCount can never exceed the node count -- scheduling fails
-      # outright rather than degrading to a worse spread.
+      {{- if or .Values.affinity.nodeAffinity.enabled (ne .Values.affinity.podAntiAffinity.type "none") }}
       affinity:
+        {{- if .Values.affinity.nodeAffinity.enabled }}
+        # required: a pod can ONLY schedule on a node carrying this label --
+        # note this is "requiredDuringScheduling IgnoredDuringExecution":
+        # the "IgnoredDuringExecution" half means removing the label later
+        # does NOT evict pods already running there, it only blocks NEW
+        # scheduling decisions.
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: {{ .Values.affinity.nodeAffinity.label }}
+                    operator: In
+                    values:
+                      - {{ .Values.affinity.nodeAffinity.value | quote }}
+        {{- end }}
+        {{- if eq .Values.affinity.podAntiAffinity.type "hard" }}
+        # required: a pod can ONLY schedule on a node with no other
+        # booking-service pod already on it. Guarantees real spread (no
+        # single node failure takes out more than one replica) but means
+        # replicaCount can never exceed the node count -- scheduling fails
+        # outright rather than degrading to a worse spread.
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
                 matchLabels:
                   {{- include "booking-service.selectorLabels" . | nindent 18 }}
               topologyKey: "kubernetes.io/hostname"
-      {{- else if eq .Values.affinity.podAntiAffinity.type "soft" }}
-      # preferred: the scheduler tries for the same spread as above, but
-      # will still place a pod on an already-occupied node rather than
-      # leave it Pending once every node has one.
-      affinity:
+        {{- else if eq .Values.affinity.podAntiAffinity.type "soft" }}
+        # preferred: the scheduler tries for the same spread as above, but
+        # will still place a pod on an already-occupied node rather than
+        # leave it Pending once every node has one.
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - weight: 100
@@ -41,6 +56,7 @@ spec:
                   matchLabels:
                     {{- include "booking-service.selectorLabels" . | nindent 20 }}
                 topologyKey: "kubernetes.io/hostname"
+        {{- end }}
       {{- end }}
       containers:
         - name: booking-service
