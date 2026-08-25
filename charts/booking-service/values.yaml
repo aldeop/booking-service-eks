@@ -64,3 +64,13 @@ affinity:
     enabled: false
     label: booking-service-primary
     value: "true"
+
+tolerations:
+  enabled: false
+  key: dedicated
+  value: booking-service
+  effect: NoSchedule
+  # Only meaningful when effect is NoExecute -- how long an already-running
+  # pod is allowed to stay after the taint is applied, before eviction.
+  # null means "tolerate indefinitely."
+  tolerationSeconds: null

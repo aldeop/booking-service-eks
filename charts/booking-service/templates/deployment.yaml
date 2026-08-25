@@ -58,6 +58,16 @@ spec:
                 topologyKey: "kubernetes.io/hostname"
         {{- end }}
       {{- end }}
+      {{- if .Values.tolerations.enabled }}
+      tolerations:
+        - key: {{ .Values.tolerations.key }}
+          operator: Equal
+          value: {{ .Values.tolerations.value | quote }}
+          effect: {{ .Values.tolerations.effect }}
+          {{- if .Values.tolerations.tolerationSeconds }}
+          tolerationSeconds: {{ .Values.tolerations.tolerationSeconds }}
+          {{- end }}
+      {{- end }}
       containers:
         - name: booking-service
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
