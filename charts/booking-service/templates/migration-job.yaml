@@ -24,6 +24,10 @@ spec:
     spec:
       restartPolicy: Never
       serviceAccountName: {{ .Values.serviceAccount.name }}
+      {{- if .Values.image.pullSecretName }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecretName }}
+      {{- end }}
       containers:
         - name: migrate
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

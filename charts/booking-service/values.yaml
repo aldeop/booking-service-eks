@@ -1,7 +1,11 @@
 image:
-  repository: booking-service
-  tag: local
+  repository: ghcr.io/aldeop/booking-service
+  tag: latest
   pullPolicy: IfNotPresent
+  # Name of a docker-registry Secret already created in the target
+  # namespace -- required for GHCR since packages are private by default.
+  # Leave blank for a public registry (e.g. local testing against ECR).
+  pullSecretName: ""
 
 replicaCount: 2
 

@@ -68,6 +68,10 @@ spec:
           tolerationSeconds: {{ .Values.tolerations.tolerationSeconds }}
           {{- end }}
       {{- end }}
+      {{- if .Values.image.pullSecretName }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecretName }}
+      {{- end }}
       containers:
         - name: booking-service
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
