@@ -1,0 +1,17 @@
+# Real values for the Pluralsight sandbox session currently in progress.
+# Committed (unlike values-sandbox-local.yaml) because ArgoCD syncs from
+# git and has no other way to see these -- update and commit this file
+# fresh each session, same as you'd update values-sandbox-local.yaml for
+# manual helm installs. These are ARNs/hostnames, not credentials: knowing
+# an ARN grants no access without real AWS permissions behind it, so this
+# isn't a secret leak, just config that goes stale the moment the sandbox
+# resets (same as any other environment-specific value).
+image:
+  pullSecretName: ghcr-pull-secret
+
+database:
+  host: booking-service-db.celqcs2mc62h.us-east-1.rds.amazonaws.com
+  secretArn: "arn:aws:secretsmanager:us-east-1:409661147503:secret:rds!db-e4b7e600-8e75-47f0-b7da-6bba54c574db-nvnRh4"
+
+serviceAccount:
+  roleArn: arn:aws:iam::409661147503:role/booking-service-irsa

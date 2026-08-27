@@ -1,0 +1,31 @@
+# ArgoCD's entry point for this app. Applied directly via `kubectl apply`
+# (not itself synced from git) -- ArgoCD has to exist in-cluster before it
+# can sync anything, so this first Application always gets bootstrapped
+# manually, once per sandbox session. Everything AFTER this point (the
+# chart's own resources) is pulled and reconciled from git automatically.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: booking-service
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/aldeop/booking-service-eks.git
+    targetRevision: main
+    path: charts/booking-service
+    helm:
+      valueFiles:
+        - values-sandbox.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: booking-service
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

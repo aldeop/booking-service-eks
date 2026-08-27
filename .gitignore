@@ -19,6 +19,9 @@ crash.log
 # Helm
 charts/*.tgz
 Chart.lock
+# Real per-session sandbox values (ECR URI, RDS endpoint, secret/role ARNs) --
+# ephemeral and account-specific, never worth committing.
+values-sandbox-local.yaml
 
 # Secrets — never commit real ones
 *.env
