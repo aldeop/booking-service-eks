@@ -1,0 +1,26 @@
+{{- if .Values.grafanaDashboard.enabled }}
+# Loaded via .Files.Get rather than inlined directly -- the dashboard JSON
+# legitimately uses double-curly-brace Grafana legend syntax for template
+# variables, which would collide with Helm's own templating if pasted
+# straight into this file (Helm parses the WHOLE file as a Go template
+# before YAML/comments are even considered, so this bit me once already
+# by putting literal double braces in this very comment). .Files.Get
+# reads the file's raw bytes without applying Go template evaluation to
+# its contents, sidestepping that entirely.
+#
+# The grafana_dashboard: "1" label is what kube-prometheus-stack's Grafana
+# sidecar watches for -- it auto-imports any ConfigMap carrying it, from
+# any namespace once grafana.sidecar.dashboards.searchNamespace=ALL is set
+# (not the chart default; set manually when installing kube-prometheus-stack
+# in this sandbox).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-grafana-dashboard
+  labels:
+    {{- include "booking-service.labels" . | nindent 4 }}
+    grafana_dashboard: "1"
+data:
+  booking-service-dashboard.json: |
+    {{- .Files.Get "dashboards/booking-service-dashboard.json" | nindent 4 }}
+{{- end }}

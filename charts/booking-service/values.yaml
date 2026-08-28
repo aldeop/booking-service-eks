@@ -85,3 +85,6 @@ serviceMonitor:
   # under -- its default Prometheus only scrapes ServiceMonitors carrying
   # this exact release label.
   prometheusReleaseLabel: kube-prometheus-stack
+
+grafanaDashboard:
+  enabled: false
