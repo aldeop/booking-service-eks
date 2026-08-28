@@ -15,3 +15,6 @@ database:
 
 serviceAccount:
   roleArn: arn:aws:iam::992382450311:role/booking-service-irsa
+
+serviceMonitor:
+  enabled: true
