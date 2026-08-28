@@ -7,7 +7,10 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: {{ .Values.service.port }}
+    # Named so the ServiceMonitor can reference it by name rather than
+    # number -- that's how ServiceMonitor's endpoints[].port field works.
+    - name: http
+      port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.targetPort }}
       protocol: TCP
   selector:

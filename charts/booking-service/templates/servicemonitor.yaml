@@ -1,0 +1,23 @@
+{{- if .Values.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    {{- include "booking-service.labels" . | nindent 4 }}
+    # Required for kube-prometheus-stack's default Prometheus to pick this
+    # up at all -- its serviceMonitorSelector defaults to matching
+    # release: <kube-prometheus-stack Helm release name>, not an empty
+    # selector. Without this exact label, Prometheus silently ignores the
+    # ServiceMonitor entirely -- a very common real-world gotcha, verified
+    # against the chart's actual default behavior before building this.
+    release: {{ .Values.serviceMonitor.prometheusReleaseLabel }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "booking-service.selectorLabels" . | nindent 6 }}
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+{{- end }}
