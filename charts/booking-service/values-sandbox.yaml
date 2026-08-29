@@ -7,6 +7,15 @@
 # isn't a secret leak, just config that goes stale the moment the sandbox
 # resets (same as any other environment-specific value).
 image:
+  # Pinned to the commit CI actually built and pushed, not `latest` --
+  # `latest` is mutable, so its underlying digest can change without the
+  # rendered manifest text changing at all, which means ArgoCD has nothing
+  # to diff/sync and imagePullPolicy: IfNotPresent means nodes won't
+  # re-pull it either. Nothing here would ever roll out automatically on a
+  # tag like `latest` -- this is exactly why real GitOps pins to immutable
+  # references. Bump this to the new commit SHA every time you actually
+  # want a deploy to happen.
+  tag: a5418a77c0632e626f9ec41dffca5096cf71c78a
   pullSecretName: ghcr-pull-secret
 
 database:
