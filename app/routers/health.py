@@ -3,6 +3,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.version import APP_VERSION
 
 router = APIRouter()
 
@@ -14,7 +15,7 @@ def healthz():
     nothing external — a dependency outage should never cause Kubernetes to kill and
     restart this container (that's what readiness is for).
     """
-    return {"status": "ok"}
+    return {"status": "ok", "version": APP_VERSION}
 
 
 @router.get("/readyz")

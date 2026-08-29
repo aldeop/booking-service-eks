@@ -2,8 +2,9 @@ from fastapi import FastAPI
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.routers import appointments, health
+from app.version import APP_VERSION
 
-app = FastAPI(title="booking-service")
+app = FastAPI(title="booking-service", version=APP_VERSION)
 
 app.include_router(health.router)
 app.include_router(appointments.router)
