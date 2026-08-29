@@ -10,11 +10,11 @@ image:
   pullSecretName: ghcr-pull-secret
 
 database:
-  host: booking-service-db.c5i00ecu6tsl.us-east-1.rds.amazonaws.com
-  secretArn: "arn:aws:secretsmanager:us-east-1:992382450311:secret:rds!db-d389d84e-27d4-4653-8d86-935e3a4dd11e-oTmkdV"
+  host: booking-service-db.cg1uo8ke8sfe.us-east-1.rds.amazonaws.com
+  secretArn: "arn:aws:secretsmanager:us-east-1:495732660211:secret:rds!db-23f30288-ade1-4b31-af3e-eaefd4b60761-paVwJO"
 
 serviceAccount:
-  roleArn: arn:aws:iam::992382450311:role/booking-service-irsa
+  roleArn: arn:aws:iam::495732660211:role/booking-service-irsa
 
 serviceMonitor:
   enabled: true
