@@ -1,0 +1,17 @@
+{{- if .Values.podDisruptionBudget.enabled }}
+# Protects against voluntary disruptions (node drains during a cluster
+# upgrade, `kubectl drain`, cluster-autoscaler scale-down) taking out every
+# replica at once. Does NOT protect against involuntary disruptions (a
+# node crashing outright) -- that's what replicaCount/anti-affinity are for.
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    {{- include "booking-service.labels" . | nindent 4 }}
+spec:
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
+  selector:
+    matchLabels:
+      {{- include "booking-service.selectorLabels" . | nindent 6 }}
+{{- end }}
